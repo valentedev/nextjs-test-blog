@@ -3,15 +3,15 @@ import path from "path";
 import matter from "gray-matter";
 import Link from "next/link";
 import Layout from "../components/Layout";
+import Post from "../components/Post";
 
 export default function HomePage({ posts }) {
-  console.log(posts);
   return (
     <Layout className="flex gap-1 bg-pink-200 p-2">
       <h1 className="text-5xl border-b-4 p-5 font-bold">Latest posts</h1>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
         {posts.map((post, index) => (
-          <h3 key={index}>{post.frontmatter.title}</h3>
+          <Post key={index} post={post} />
         ))}
       </div>
 
@@ -26,13 +26,21 @@ export default function HomePage({ posts }) {
 
 export async function getStaticProps() {
   const files = fs.readdirSync(path.join("posts"));
-  const posts = files.map(fn => {
-    const slug = fn.replace(".md", "");
-    const markdownWithMeta = fs.readFileSync(path.join("posts", fn), "utf-8");
+
+  const posts = files.map(filename => {
+    const slug = filename.replace(".md", "");
+
+    const markdownWithMeta = fs.readFileSync(
+      path.join("posts", filename),
+      "utf-8"
+    );
 
     const { data: frontmatter } = matter(markdownWithMeta);
 
-    return { slug, frontmatter };
+    return {
+      slug,
+      frontmatter,
+    };
   });
 
   return {
