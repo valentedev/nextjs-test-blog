@@ -35,7 +35,7 @@ export default function Post({ post }) {
           <a className="text-gray-900 hover:text-blue-600">Read More</a>
         </Link>
         <div className="flex items-center">
-          <Image
+          <img
             src={post.frontmatter.author_image}
             alt=""
             className="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block"

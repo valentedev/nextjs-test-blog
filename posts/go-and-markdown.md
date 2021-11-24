@@ -5,7 +5,7 @@ excerpt: "Go is a general purpose programming language"
 cover_image: "/images/posts/img8.jpg"
 category: "Go"
 author: "Rodrigo Valente"
-author_image: "https://randomuser.me/api/portraits/men/12.jpg"
+author_image: "https://randomuser.me/api/portraits/men/21.jpg"
 ---
 
 <!-- Markdow generator - https://jaspervdj.be/lorem-markdownum/ -->
