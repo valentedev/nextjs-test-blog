@@ -1,23 +1,29 @@
 import fs from "fs";
 import path from "path";
-// import matter from "gray-matter";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 import Post from "@/components/Post";
-// import { sortByDate } from "/utils/index";
+import CategoryList from "@/components/CategoryList";
 import { POSTS_PER_PAGE } from "@/config/index";
 import Pagination from "@/components/Pagination";
 import { getPosts } from "@/lib/posts";
 
-export default function BlogPage({ posts, currentPage, numPages }) {
+export default function BlogPage({ posts, currentPage, numPages, categories }) {
   return (
     <Layout className="flex gap-1 bg-pink-200 p-2">
-      <h1 className="text-5xl border-b-4 p-5 font-bold">Blog</h1>
-      <Pagination currentPage={currentPage} numPages={numPages} />
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {posts.map((post, index) => (
-          <Post key={index} post={post} />
-        ))}
+      <div className="flex justify-between">
+        <div className="w-3/4 mr-10">
+          <h1 className="text-5xl border-b-4 p-5 font-bold">Blog</h1>
+          <Pagination currentPage={currentPage} numPages={numPages} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {posts.map((post, index) => (
+              <Post key={index} post={post} />
+            ))}
+          </div>
+        </div>
+        <div className="w-1/4">
+          <CategoryList categories={categories} />
+        </div>
       </div>
 
       <Link href="/blog">
@@ -49,25 +55,11 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   const page = parseInt((params && params.page_index) || 1);
   const files = fs.readdirSync(path.join("posts"));
-
-  // const posts = files.map(filename => {
-  //   const slug = filename.replace(".md", "");
-
-  //   const markdownWithMeta = fs.readFileSync(
-  //     path.join("posts", filename),
-  //     "utf-8"
-  //   );
-
-  //   const { data: frontmatter } = matter(markdownWithMeta);
-
-  //   return {
-  //     slug,
-  //     frontmatter,
-  //   };
-  // });
-
   const posts = getPosts();
-
+  // vai criar uma lista de categories com itens repetidos
+  const categories = posts.map(post => post.frontmatter.category);
+  // var criar uma lista de categories com itens unicos
+  const uniqueCategories = [...new Set(categories)];
   const numPages = Math.ceil(files.length / POSTS_PER_PAGE);
   const page_index = page - 1;
   const orderedPosts = posts.slice(
@@ -80,6 +72,7 @@ export async function getStaticProps({ params }) {
       posts: orderedPosts,
       numPages,
       currentPage: page,
+      categories: uniqueCategories,
     },
   };
 }
