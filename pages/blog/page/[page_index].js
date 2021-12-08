@@ -5,7 +5,7 @@ import Link from "next/link";
 import Layout from "@/components/Layout";
 import Post from "@/components/Post";
 import { sortByDate } from "/utils/index";
-import { POSTS_PER_PAGE } from "@/config";
+import { POSTS_PER_PAGE } from "@/config/index";
 import Pagination from "@/components/Pagination";
 
 export default function BlogPage({ posts, currentPage, numPages }) {
