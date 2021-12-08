@@ -1,12 +1,13 @@
 import fs from "fs";
 import path from "path";
-import matter from "gray-matter";
+// import matter from "gray-matter";
 import Link from "next/link";
 import Layout from "@/components/Layout";
 import Post from "@/components/Post";
-import { sortByDate } from "/utils/index";
+// import { sortByDate } from "/utils/index";
 import { POSTS_PER_PAGE } from "@/config/index";
 import Pagination from "@/components/Pagination";
+import { getPosts } from "@/lib/posts";
 
 export default function BlogPage({ posts, currentPage, numPages }) {
   return (
@@ -27,23 +28,6 @@ export default function BlogPage({ posts, currentPage, numPages }) {
     </Layout>
   );
 }
-
-// export async function getStaticPaths() {
-//   const files = fs.readdirSync(path.join("posts"));
-//   const numPages = Math.ceil(files.length / POSTS_PER_PAGE);
-//   let paths = [];
-//   for (let i = 1; i <= numPages; i++) {
-//     paths.push({
-//       params: { page_index: i.toString() },
-//     });
-//   }
-
-//   console.log(paths);
-//   return {
-//     paths,
-//     fallback: false,
-//   };
-// }
 
 export async function getStaticPaths() {
   const files = fs.readdirSync(path.join("posts"));
@@ -66,27 +50,30 @@ export async function getStaticProps({ params }) {
   const page = parseInt((params && params.page_index) || 1);
   const files = fs.readdirSync(path.join("posts"));
 
-  const posts = files.map(filename => {
-    const slug = filename.replace(".md", "");
+  // const posts = files.map(filename => {
+  //   const slug = filename.replace(".md", "");
 
-    const markdownWithMeta = fs.readFileSync(
-      path.join("posts", filename),
-      "utf-8"
-    );
+  //   const markdownWithMeta = fs.readFileSync(
+  //     path.join("posts", filename),
+  //     "utf-8"
+  //   );
 
-    const { data: frontmatter } = matter(markdownWithMeta);
+  //   const { data: frontmatter } = matter(markdownWithMeta);
 
-    return {
-      slug,
-      frontmatter,
-    };
-  });
+  //   return {
+  //     slug,
+  //     frontmatter,
+  //   };
+  // });
+
+  const posts = getPosts();
 
   const numPages = Math.ceil(files.length / POSTS_PER_PAGE);
   const page_index = page - 1;
-  const orderedPosts = posts
-    .sort(sortByDate)
-    .slice(page_index * POSTS_PER_PAGE, (page_index + 1) * POSTS_PER_PAGE);
+  const orderedPosts = posts.slice(
+    page_index * POSTS_PER_PAGE,
+    (page_index + 1) * POSTS_PER_PAGE
+  );
 
   return {
     props: {
